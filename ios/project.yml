@@ -1,0 +1,42 @@
+# XcodeGen project spec
+# Run: brew install xcodegen && xcodegen generate
+# This produces SmartCollar.xcodeproj — open in Xcode to build.
+
+name: SmartCollar
+options:
+  bundleIdPrefix: com.smartcollar
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    PRODUCT_BUNDLE_IDENTIFIER: com.smartcollar.app
+    DEVELOPMENT_TEAM: ""   # fill in your Apple Developer Team ID
+
+targets:
+  SmartCollar:
+    type: application
+    platform: iOS
+    sources:
+      - path: SmartCollar
+    info:
+      path: SmartCollar/Info.plist
+      properties:
+        CFBundleName: SmartCollar
+        CFBundleDisplayName: SmartCollar
+        UILaunchScreen: {}
+        NSBluetoothAlwaysUsageDescription: "SmartCollar uses Bluetooth to read data from your dog's collar."
+        NSBluetoothPeripheralUsageDescription: "SmartCollar reads activity data from your dog's collar over Bluetooth."
+        NSLocationAlwaysAndWhenInUseUsageDescription: "SmartCollar detects nearby dog parks and trails to automatically track your dog's sessions."
+        NSLocationWhenInUseUsageDescription: "SmartCollar uses your location to find nearby dog parks and trails."
+        UIBackgroundModes:
+          - location
+          - bluetooth-central
+        NSLocationAlwaysUsageDescription: "SmartCollar monitors geofences in the background to automatically start sessions when you arrive at a dog park."
+    settings:
+      base:
+        INFOPLIST_FILE: SmartCollar/Info.plist
+    dependencies: []

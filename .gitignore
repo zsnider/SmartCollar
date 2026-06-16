@@ -1,0 +1,23 @@
+# Node / Backend
+server/node_modules/
+server/dist/
+server/.env
+
+# iOS / Xcode
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+ios/DerivedData/
+ios/build/
+ios/*.xcuserstate
+ios/**/*.xcuserstate
+ios/Pods/
+ios/.swiftpm/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.local
+.env.*.local

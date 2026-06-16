@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: smartcollar-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smartcollar
+      POSTGRES_USER: smartcollar
+      POSTGRES_PASSWORD: smartcollar
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./server/src/db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+
+  redis:
+    image: redis:7-alpine
+    container_name: smartcollar-redis
+    restart: unless-stopped
+    command: redis-server --notify-keyspace-events KEA  # enable keyspace notifications for WS leaderboard
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
