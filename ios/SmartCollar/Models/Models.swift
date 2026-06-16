@@ -40,7 +40,7 @@ enum CollarProvider: String, Codable {
 
 // MARK: - Location
 
-struct Location: Codable, Identifiable {
+struct Location: Codable, Identifiable, Hashable {
     let id: String
     let name: String
     let type: LocationType
@@ -113,6 +113,6 @@ struct CollarReading {
 
 struct AuthResponse: Codable {
     let token: String
-    let refreshToken: String
+    let refreshToken: String?
     let user: User
 }

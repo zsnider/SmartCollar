@@ -41,7 +41,7 @@ final class LocationManager: NSObject, ObservableObject {
     func startGeofence(locationId: String, lat: Double, lng: Double, radiusMeters: Double) {
         let region = CLCircularRegion(
             center: CLLocationCoordinate2D(latitude: lat, longitude: lng),
-            radius: min(radiusMeters, CLLocationManager.maximumRegionMonitoringDistance),
+            radius: min(radiusMeters, manager.maximumRegionMonitoringDistance),
             identifier: locationId
         )
         region.notifyOnEntry = true

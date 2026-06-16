@@ -25,7 +25,18 @@ export async function authRoutes(app: FastifyInstance) {
       )
       const user = rows[0]
       const token = app.jwt.sign({ userId: user.id, email: user.email })
-      return reply.code(201).send({ token, user })
+      const refreshToken = (await import('uuid')).v4()
+      const refreshHash = await bcrypt.hash(refreshToken, 10)
+      await db.query(
+        `INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+         VALUES ($1, $2, NOW() + INTERVAL '30 days')`,
+        [user.id, refreshHash]
+      )
+      return reply.code(201).send({
+        token,
+        refreshToken,
+        user: { id: user.id, email: user.email, displayName: user.display_name },
+      })
     } catch (err: unknown) {
       if ((err as { code?: string }).code === '23505') {
         return reply.code(409).send({ error: 'Email already registered' })
