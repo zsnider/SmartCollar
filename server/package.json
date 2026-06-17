@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "db:migrate": "psql $DATABASE_URL -f src/db/schema.sql",
+    "db:migrate:001": "psql $DATABASE_URL -f src/db/migrations/001_add_boundary.sql",
     "db:seed": "tsx src/db/seed-locations.ts",
     "lint": "eslint src --ext .ts"
   },

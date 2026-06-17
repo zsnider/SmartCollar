@@ -109,6 +109,19 @@ struct CollarReading {
     let batteryPct: Double
 }
 
+// MARK: - Dog Stats
+
+struct DogStats: Codable {
+    let totalSessions: Int
+    let totalSteps: Int
+    let bestSpeedMph: Double
+    let totalDurationSecs: Int
+    let avgSpeedMph: Double
+    let bestAccelG: Double
+    let favoritePark: String?
+    let favoriteParkVisits: Int
+}
+
 // MARK: - Auth
 
 struct AuthResponse: Codable {

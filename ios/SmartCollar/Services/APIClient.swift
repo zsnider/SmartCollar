@@ -52,6 +52,7 @@ final class APIClient: ObservableObject {
 
     // MARK: - Core Request
 
+    @discardableResult
     func request<T: Decodable>(
         _ path: String,
         method: String = "GET",
@@ -146,6 +147,10 @@ final class APIClient: ObservableObject {
             let weightLbs: Double?
         }
         return try await request("/dogs", method: "POST", body: Body(name: name, breed: breed, weightLbs: weightLbs))
+    }
+
+    func fetchDogStats(dogId: String) async throws -> DogStats {
+        try await request("/dogs/\(dogId)/stats")
     }
 
     func fetchCollars(dogId: String) async throws -> [Collar] {

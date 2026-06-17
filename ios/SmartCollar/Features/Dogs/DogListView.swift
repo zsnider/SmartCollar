@@ -14,7 +14,7 @@ struct DogListView: View {
                                           description: Text("Add your first dog to get started."))
                 } else {
                     List(vm.dogs) { dog in
-                        NavigationLink(destination: Text("Dog detail — \(dog.name)")) {
+                        NavigationLink(destination: DogDetailView(dog: dog)) {
                             DogRowView(dog: dog)
                         }
                     }

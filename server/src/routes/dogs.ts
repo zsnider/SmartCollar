@@ -47,6 +47,54 @@ export async function dogRoutes(app: FastifyInstance) {
     }
   )
 
+  // GET /dogs/:id/stats
+  app.get<{ Params: { id: string } }>(
+    '/dogs/:id/stats',
+    { preHandler: requireAuth },
+    async (request, reply) => {
+      const { userId } = request.user
+      const { id: dogId } = request.params
+
+      // Verify ownership
+      const { rows: dogRows } = await db.query(
+        'SELECT id FROM dogs WHERE id = $1 AND owner_id = $2',
+        [dogId, userId]
+      )
+      if (!dogRows[0]) return reply.code(404).send({ error: 'Dog not found' })
+
+      const { rows } = await db.query(
+        `SELECT
+           COUNT(*)::int                           AS total_sessions,
+           COALESCE(SUM(total_steps), 0)::int      AS total_steps,
+           COALESCE(MAX(max_speed_mph), 0)         AS best_speed_mph,
+           COALESCE(SUM(duration_secs), 0)::int    AS total_duration_secs,
+           COALESCE(AVG(avg_speed_mph), 0)         AS avg_speed_mph,
+           COALESCE(MAX(peak_accel_g), 0)          AS best_accel_g
+         FROM sessions
+         WHERE dog_id = $1 AND ended_at IS NOT NULL`,
+        [dogId]
+      )
+
+      // Favorite park (most visited location)
+      const { rows: parkRows } = await db.query(
+        `SELECT l.name, COUNT(*)::int AS visit_count
+         FROM sessions s
+         JOIN locations l ON s.location_id = l.id
+         WHERE s.dog_id = $1 AND s.ended_at IS NOT NULL AND s.location_id IS NOT NULL
+         GROUP BY l.name
+         ORDER BY visit_count DESC
+         LIMIT 1`,
+        [dogId]
+      )
+
+      return reply.send({
+        ...rows[0],
+        favorite_park: parkRows[0]?.name ?? null,
+        favorite_park_visits: parkRows[0]?.visit_count ?? 0,
+      })
+    }
+  )
+
   // PATCH /dogs/:id
   app.patch<{
     Params: { id: string }
@@ -110,7 +158,6 @@ export async function dogRoutes(app: FastifyInstance) {
     const { dogId } = request.params
     const { provider, externalId, bleServiceUUID } = request.body
 
-    // Verify the dog belongs to the user
     const { rows: dogRows } = await db.query(
       'SELECT id FROM dogs WHERE id = $1 AND owner_id = $2',
       [dogId, userId]
